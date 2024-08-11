@@ -6,6 +6,8 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import CustomFormField from "../CustomFormField";
+import SubmitButton from "../SubmitButton";
+import { userFormSchema } from "@/lib/validation";
 
 export enum FormFieldTypes {
   INPUT = "input",
@@ -18,22 +20,22 @@ export enum FormFieldTypes {
   SKELETON = "skeleton",
 }
 
-const formSchema = z.object({
-  username: z.string().min(2).max(50),
-});
-
 const PatientForm = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof userFormSchema>>({
+    resolver: zodResolver(userFormSchema),
     defaultValues: {
-      username: "",
+      name: "",
+      email: "",
+      phone: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof userFormSchema>) {
+    try {
+      // TODO: Handle form submission
+    } catch (error) {
+      console.error(error);
+    }
   }
   return (
     <Form {...form}>
@@ -53,7 +55,25 @@ const PatientForm = () => {
           iconSrc="/assets/icons/user.svg"
           iconAlt="user"
         />
-        <Button type="submit">Submit</Button>
+        <CustomFormField
+          fieldType={FormFieldTypes.INPUT}
+          control={form.control}
+          name="email"
+          label="Email"
+          placeholder="example@gmail.com"
+          iconSrc="/assets/icons/email.svg"
+          iconAlt="email"
+        />
+        <CustomFormField
+          fieldType={FormFieldTypes.PHONE_INPUT}
+          control={form.control}
+          name="phone"
+          label="Phone Number"
+          placeholder="+1 (555) 555-5555"
+        />
+        <SubmitButton isLoading={form.formState.isSubmitting}>
+          Get Started
+        </SubmitButton>
       </form>
     </Form>
   );
