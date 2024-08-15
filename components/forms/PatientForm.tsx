@@ -8,6 +8,8 @@ import { Form } from "@/components/ui/form";
 import CustomFormField from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 import { userFormSchema } from "@/lib/validation";
+import { createUser } from "@/lib/action/patient.actions";
+import { useRouter } from "next/navigation";
 
 export enum FormFieldTypes {
   INPUT = "input",
@@ -29,10 +31,14 @@ const PatientForm = () => {
       phone: "",
     },
   });
+  const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof userFormSchema>) {
     try {
-      // TODO: Handle form submission
+      const newUser = await createUser(values);
+      if (newUser) {
+        router.push(`/patients/${newUser.$id}/register`);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -51,7 +57,7 @@ const PatientForm = () => {
           control={form.control}
           name="name"
           label="Full Name"
-          placeholder="John Doe"
+          placeholder="Your Name"
           iconSrc="/assets/icons/user.svg"
           iconAlt="user"
         />
@@ -60,7 +66,7 @@ const PatientForm = () => {
           control={form.control}
           name="email"
           label="Email"
-          placeholder="example@gmail.com"
+          placeholder="Your Email"
           iconSrc="/assets/icons/email.svg"
           iconAlt="email"
         />
